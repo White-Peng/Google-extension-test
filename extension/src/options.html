@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouTube Learning Reflection – Options</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="options">
+    <main class="options__container">
+      <header class="options__header">
+        <h1>YouTube Data API Setup</h1>
+        <p>
+          Provide a valid YouTube Data API key so the extension can fetch metadata, summaries, and generate flashcards
+          from learning videos in your browsing history.
+        </p>
+      </header>
+
+      <section class="card">
+        <form id="apiKeyForm" class="form">
+          <label for="apiKeyInput" class="form__label">YouTube Data API key</label>
+          <input
+            id="apiKeyInput"
+            name="apiKey"
+            type="text"
+            class="form__input"
+            placeholder="AIza..."
+            autocomplete="off"
+            required
+          />
+          <p class="form__help">
+            Generate an API key from
+            <a class="link" href="https://console.cloud.google.com/apis/dashboard" target="_blank" rel="noopener noreferrer">
+              Google Cloud Console
+            </a>
+            with access to the YouTube Data API v3.
+          </p>
+          <div class="form__actions">
+            <button type="submit" class="button button--primary">Save API key</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="optionsStatus" class="status status--hidden" role="status">
+        <span id="optionsStatusMessage"></span>
+      </section>
+    </main>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

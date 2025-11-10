@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouTube Learning Reflection</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="popup">
+    <header class="popup__header">
+      <div>
+        <h1 class="popup__title">Learning Reflection</h1>
+        <p class="popup__subtitle">
+          Review recent learning-focused YouTube videos and challenge yourself with flashcards.
+        </p>
+      </div>
+      <button id="refreshButton" class="button button--primary">Refresh</button>
+    </header>
+
+    <section id="statusSection" class="status status--hidden">
+      <span id="statusMessage"></span>
+    </section>
+
+    <main id="content" class="content">
+      <section id="emptyState" class="empty-state status--hidden">
+        <p>No processed learning videos yet.</p>
+        <p>Click <strong>Refresh</strong> after setting your YouTube Data API key in the options page.</p>
+        <a class="link" href="#" id="openOptionsLink">Open options</a>
+      </section>
+
+      <section id="videosContainer" class="videos"></section>
+    </main>
+
+    <template id="videoTemplate">
+      <article class="video-card">
+        <header class="video-card__header">
+          <h2 class="video-card__title"></h2>
+          <a class="link video-card__link" target="_blank" rel="noopener noreferrer">Watch again</a>
+        </header>
+        <div class="video-card__meta">
+          <span class="video-card__channel"></span>
+          <span class="video-card__published"></span>
+          <span class="video-card__category"></span>
+        </div>
+        <section class="video-card__summary">
+          <h3>Key Ideas</h3>
+          <ul class="video-card__ideas"></ul>
+        </section>
+        <section class="video-card__reflection">
+          <h3>Reflection Prompt</h3>
+          <p class="video-card__prompt"></p>
+        </section>
+        <section class="video-card__flashcards">
+          <h3>Flashcards</h3>
+          <div class="flashcards"></div>
+        </section>
+      </article>
+    </template>
+
+    <template id="flashcardTemplate">
+      <div class="flashcard">
+        <p class="flashcard__question"></p>
+        <button class="button button--link flashcard__toggle">Show answer</button>
+        <p class="flashcard__answer flashcard__answer--hidden"></p>
+      </div>
+    </template>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
