@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learning Reflection</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <div>
+          <h1 class="app__title">Learning Reflection</h1>
+          <p class="app__subtitle">Summaries & flashcards from your educational YouTube history.</p>
+        </div>
+        <button class="button button--refresh" data-action="refresh">Refresh</button>
+      </header>
+
+      <section class="status">
+        <span class="status__indicator" id="status-indicator"></span>
+        <span id="status-text">Loading analysis…</span>
+      </section>
+
+      <section class="videos">
+        <h2>Educational videos</h2>
+        <ul id="video-list" class="videos__list"></ul>
+      </section>
+
+      <section class="flashcards">
+        <h2>Flashcards</h2>
+        <div id="flashcard-list" class="flashcards__container"></div>
+      </section>
+    </main>
+
+    <template id="video-item-template">
+      <li class="video">
+        <a class="video__title" target="_blank" rel="noopener noreferrer"></a>
+        <p class="video__summary"></p>
+        <div class="video__meta">
+          <span class="video__channel"></span>
+          <span class="video__duration"></span>
+          <span class="video__score"></span>
+        </div>
+      </li>
+    </template>
+
+    <template id="flashcard-template">
+      <article class="flashcard">
+        <h3 class="flashcard__question"></h3>
+        <p class="flashcard__answer"></p>
+        <a class="flashcard__source" target="_blank" rel="noopener noreferrer">Open video</a>
+      </article>
+    </template>
+
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

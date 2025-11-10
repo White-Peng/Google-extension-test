@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learning Reflection Settings</title>
+    <link rel="stylesheet" href="./options.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page__header">
+        <h1>Learning Reflection Settings</h1>
+        <p>Configure how the extension identifies educational content and creates summaries.</p>
+      </header>
+
+      <form id="settings-form" class="form">
+        <section class="card">
+          <h2>History window</h2>
+          <label class="field">
+            <span>Lookback window (hours)</span>
+            <input type="number" name="lookbackHours" min="1" max="336" required />
+          </label>
+          <label class="field">
+            <span>Maximum videos to analyse</span>
+            <input type="number" name="maxResults" min="1" max="50" required />
+          </label>
+          <label class="field">
+            <span>Minimum duration (minutes)</span>
+            <input type="number" name="minimumDurationMinutes" min="1" max="240" required />
+          </label>
+          <label class="field field--checkbox">
+            <input type="checkbox" name="includeShorts" />
+            <span>Include YouTube Shorts</span>
+          </label>
+        </section>
+
+        <section class="card">
+          <h2>Educational keywords</h2>
+          <label class="field">
+            <span>Keywords (comma separated)</span>
+            <textarea name="keywords" rows="3"></textarea>
+          </label>
+        </section>
+
+        <section class="card">
+          <h2>Summaries</h2>
+          <label class="field">
+            <span>Summary provider</span>
+            <select name="summaryProvider">
+              <option value="heuristic">Built-in heuristic</option>
+              <option value="llm">Custom LLM endpoint</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>LLM endpoint URL</span>
+            <input type="url" name="llmEndpoint" placeholder="https://api.example.com/v1/summarize" />
+          </label>
+          <label class="field">
+            <span>LLM API key</span>
+            <input type="password" name="llmApiKey" />
+          </label>
+          <label class="field">
+            <span>LLM model (optional)</span>
+            <input type="text" name="llmModel" placeholder="gpt-4o-mini" />
+          </label>
+        </section>
+
+        <section class="card">
+          <h2>Locale</h2>
+          <label class="field">
+            <span>Preferred locale</span>
+            <input type="text" name="locale" placeholder="en-US" />
+          </label>
+        </section>
+
+        <footer class="form__actions">
+          <button type="submit" class="button button--primary">Save</button>
+          <div id="save-status" role="status"></div>
+        </footer>
+      </form>
+    </main>
+
+    <script type="module" src="./options.js"></script>
+  </body>
+</html>
