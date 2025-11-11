@@ -104,10 +104,16 @@ async function runAnalysis() {
 
   await saveAnalysis(result);
 
-  chrome.runtime.sendMessage({
-    type: "learning-analysis:updated",
-    payload: result
-  });
+  try {
+    await chrome.runtime.sendMessage({
+      type: "learning-analysis:updated",
+      payload: result
+    });
+  } catch (error) {
+    if (!error?.message?.includes("Receiving end does not exist")) {
+      console.warn("Failed to broadcast analysis update", error);
+    }
+  }
 
   return result;
 }
