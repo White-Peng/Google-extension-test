@@ -15,7 +15,8 @@
   "permissions": [
     "storage",
     "alarms",
-    "scripting"
+    "scripting",
+    "contextMenus"
   ],
   "optional_permissions": [
     "history"

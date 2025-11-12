@@ -2,6 +2,7 @@ const statusTextEl = document.getElementById("status-text");
 const statusIndicatorEl = document.getElementById("status-indicator");
 const videoListEl = document.getElementById("video-list");
 const flashcardListEl = document.getElementById("flashcard-list");
+const collectionListEl = document.getElementById("collection-list-popup");
 const refreshButton = document.querySelector('[data-action="refresh"]');
 const dashboardButton = document.querySelector('[data-action="open-dashboard"]');
 const permissionCard = document.getElementById("permission-card");
@@ -19,9 +20,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderAnalysis(message.payload);
       setStatus("Analysis updated just now.", "success");
     }
+    if (message?.type === "learning-collection:updated") {
+      loadCollections();
+    }
   });
 
   await syncPermissionAndData();
+  await loadCollections();
 });
 
 async function syncPermissionAndData() {
@@ -85,6 +90,28 @@ async function loadLatestAnalysis() {
   } catch (error) {
     console.error("Failed to load analysis", error);
     setStatus("Unable to load analysis. Try refreshing.", "error");
+  }
+}
+
+async function loadCollections() {
+  if (!collectionListEl) return;
+  try {
+    const response = await chrome.runtime.sendMessage({ type: "collection:getAll" });
+    if (response?.ok) {
+      renderCollections(response.items ?? []);
+    } else {
+      throw new Error(response?.error ?? "Unable to fetch saved highlights");
+    }
+  } catch (error) {
+    console.error("Failed to load collections", error);
+    collectionListEl.innerHTML = "";
+    const item = document.createElement("li");
+    item.className = "collection-item";
+    const excerpt = document.createElement("p");
+    excerpt.className = "collection-item__excerpt";
+    excerpt.textContent = "Unable to load saved highlights right now.";
+    item.appendChild(excerpt);
+    collectionListEl.appendChild(item);
   }
 }
 
@@ -183,6 +210,62 @@ function renderFlashcards(cards) {
   }
 }
 
+function renderCollections(items) {
+  if (!collectionListEl) return;
+  collectionListEl.innerHTML = "";
+
+  const topItems = items.slice(0, 3);
+
+  if (!topItems.length) {
+    const empty = document.createElement("li");
+    empty.className = "collection-item";
+    const excerpt = document.createElement("p");
+    excerpt.className = "collection-item__excerpt";
+    excerpt.textContent = "Right-click any page, selection, or image to save it here.";
+    empty.appendChild(excerpt);
+    collectionListEl.appendChild(empty);
+    return;
+  }
+
+  topItems.forEach((item) => {
+    const li = document.createElement("li");
+    li.className = "collection-item";
+
+    const header = document.createElement("div");
+    header.className = "collection-item__header";
+
+    const badge = document.createElement("span");
+    badge.className = "collection-item__badge";
+    badge.textContent = formatCollectionType(item.type);
+
+    const time = document.createElement("span");
+    time.className = "collection-item__time";
+    time.textContent = timeAgo(item.savedAt);
+
+    header.appendChild(badge);
+    header.appendChild(time);
+
+    const excerpt = document.createElement("p");
+    excerpt.className = "collection-item__excerpt";
+    excerpt.textContent = truncateText(item.excerpt || item.title || "Saved item", 140);
+
+    li.appendChild(header);
+    li.appendChild(excerpt);
+
+    const destination = item.resourceUrl && item.resourceUrl !== item.url ? item.resourceUrl : item.url;
+    if (destination) {
+      const link = document.createElement("a");
+      link.className = "collection-item__link";
+      link.href = destination;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "Open source";
+      li.appendChild(link);
+    }
+    collectionListEl.appendChild(li);
+  });
+}
+
 function setStatus(text, state) {
   statusTextEl.textContent = text;
 
@@ -193,7 +276,32 @@ function setStatus(text, state) {
     idle: "#2563eb"
   };
 
-  statusIndicatorEl.style.backgroundColor = colorMap[state] ?? colorMap.idle;
+  const color = colorMap[state] ?? colorMap.idle;
+  statusIndicatorEl.style.backgroundColor = color;
+  statusIndicatorEl.style.boxShadow = `0 0 6px ${color}80`;
+}
+
+function formatCollectionType(type) {
+  switch (type) {
+    case "selection":
+      return "Text";
+    case "image":
+      return "Image";
+    case "video":
+      return "Video";
+    case "link":
+      return "Link";
+    case "page":
+      return "Page";
+    default:
+      return "Item";
+  }
+}
+
+function truncateText(text, maxLength) {
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength - 1)}…`;
 }
 
 function updatePermissionUI() {

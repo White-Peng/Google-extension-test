@@ -9,6 +9,7 @@ This repository contains a Chrome extension that inspects your YouTube watch his
 - Heuristically filters for educational content using customizable keyword scoring and duration checks.
 - Summarizes each video (built-in heuristic with optional LLM endpoint override).
 - Shows reflection prompts and flashcards in both the popup UI and a full dashboard page.
+- Lets you save interesting pages, selections, images, or videos via context menu clips for later review.
 - Offers an onboarding flow that requests browsing-history access before any data is processed.
 - Provides an options page for tuning the lookback window, keywords, summary provider, and locale.
 
@@ -23,6 +24,7 @@ extension/
       analyzer.js            # Educational scoring, summaries, flashcards
       storage.js             # chrome.storage helpers
       permissions.js         # Helpers for optional permission prompts
+      collection.js          # Manage saved highlight snippets and assets
     onboarding/
       index.html|js|css      # Consent screen opened on install
     dashboard/
@@ -45,6 +47,11 @@ extension/
 - Enable Developer mode (toggle in the top-right corner).
 - Click **Load unpacked** and select the `extension/` folder.
 - Pin the extension icon (optional) and open the popup to trigger the first analysis.
+
+## Saving Highlights
+- Right-click any page, selection, image, or link and choose **Save to Learning Reflection** to clip it.
+- A floating “Study with Learning Reflection” button also appears on YouTube to jump back into the dashboard.
+- Your most recent clips show up in the popup; the full dashboard lists everything with removal controls.
 
 ## Permissions & Privacy
 - `history`: required to read your local browsing history and identify YouTube watch pages.
