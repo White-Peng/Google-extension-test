@@ -13,13 +13,37 @@
   },
   "options_page": "src/options/options.html",
   "permissions": [
-    "history",
     "storage",
     "alarms",
     "scripting"
   ],
+  "optional_permissions": [
+    "history"
+  ],
   "host_permissions": [
     "https://www.youtube.com/*",
     "https://www.googleapis.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "src/content/youtubeHelper.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/onboarding/*",
+        "src/dashboard/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
   ]
 }

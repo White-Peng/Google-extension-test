@@ -13,8 +13,20 @@
           <h1 class="app__title">Learning Reflection</h1>
           <p class="app__subtitle">Summaries & flashcards from your educational YouTube history.</p>
         </div>
-        <button class="button button--refresh" data-action="refresh">Refresh</button>
+        <div class="app__actions">
+          <button class="button button--ghost" data-action="open-dashboard">Open dashboard</button>
+          <button class="button button--refresh" data-action="refresh">Refresh</button>
+        </div>
       </header>
+
+      <section id="permission-card" class="permission" hidden>
+        <h2>Grant access to continue</h2>
+        <p>
+          We need your permission to read recent YouTube watch history. Data stays on this device and is used only to build
+          summaries and flashcards.
+        </p>
+        <button class="button button--primary" data-action="request-permission">Allow history access</button>
+      </section>
 
       <section class="status">
         <span class="status__indicator" id="status-indicator"></span>
@@ -45,7 +57,11 @@
     </template>
 
     <template id="flashcard-template">
-      <article class="flashcard">
+      <article class="flashcard" data-state="question">
+        <button class="flashcard__toggle" type="button">
+          <span class="flashcard__label flashcard__label--question">Show answer</span>
+          <span class="flashcard__label flashcard__label--answer">Hide answer</span>
+        </button>
         <h3 class="flashcard__question"></h3>
         <p class="flashcard__answer"></p>
         <a class="flashcard__source" target="_blank" rel="noopener noreferrer">Open video</a>

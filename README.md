@@ -8,7 +8,8 @@ This repository contains a Chrome extension that inspects your YouTube watch his
 - Deduplicates videos and enriches them with metadata retrieved from the watch page.
 - Heuristically filters for educational content using customizable keyword scoring and duration checks.
 - Summarizes each video (built-in heuristic with optional LLM endpoint override).
-- Generates reflection prompts and flashcards surfaced in the popup UI.
+- Shows reflection prompts and flashcards in both the popup UI and a full dashboard page.
+- Offers an onboarding flow that requests browsing-history access before any data is processed.
 - Provides an options page for tuning the lookback window, keywords, summary provider, and locale.
 
 ## Project Structure
@@ -21,6 +22,13 @@ extension/
       history.js             # History lookup + metadata enrichment
       analyzer.js            # Educational scoring, summaries, flashcards
       storage.js             # chrome.storage helpers
+      permissions.js         # Helpers for optional permission prompts
+    onboarding/
+      index.html|js|css      # Consent screen opened on install
+    dashboard/
+      index.html|js|css      # Full-page review hub
+    content/
+      youtubeHelper.js       # Injected button on YouTube pages
     popup/
       popup.html
       popup.js

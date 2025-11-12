@@ -37,6 +37,12 @@ body {
   font-size: 0.85rem;
 }
 
+.app__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .button {
   border: none;
   border-radius: 6px;
@@ -45,11 +51,48 @@ body {
   cursor: pointer;
   background-color: #2563eb;
   color: #ffffff;
-  transition: background-color 120ms ease-in-out;
+  transition: background-color 120ms ease-in-out, transform 120ms ease-in-out;
 }
 
 .button:hover {
   background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.button--ghost {
+  background: transparent;
+  border: 1px solid rgba(37, 99, 235, 0.4);
+  color: #1d4ed8;
+}
+
+.button--ghost:hover {
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+.button--primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+}
+
+.permission {
+  border-radius: 10px;
+  padding: 14px 16px;
+  background-color: rgba(37, 99, 235, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.permission h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.permission p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .status {
@@ -130,6 +173,32 @@ body {
   gap: 8px;
 }
 
+.flashcard__toggle {
+  align-self: flex-start;
+  border: none;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(37, 99, 235, 0.9);
+  background: rgba(37, 99, 235, 0.14);
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+}
+
+.flashcard[data-state="question"] .flashcard__answer {
+  display: none;
+}
+
+.flashcard[data-state="question"] .flashcard__label--answer {
+  display: none;
+}
+
+.flashcard[data-state="answer"] .flashcard__label--question {
+  display: none;
+}
+
 .flashcard__question {
   margin: 0;
   font-size: 0.95rem;
@@ -162,6 +231,14 @@ body {
     color: rgba(226, 232, 240, 0.7);
   }
 
+  .permission {
+    background-color: rgba(37, 99, 235, 0.18);
+  }
+
+  .permission p {
+    color: rgba(226, 232, 240, 0.75);
+  }
+
   .video__meta {
     color: rgba(226, 232, 240, 0.6);
   }
@@ -170,8 +247,18 @@ body {
     background-color: rgba(37, 99, 235, 0.25);
   }
 
+  .button--ghost {
+    border-color: rgba(148, 163, 184, 0.4);
+    color: rgba(226, 232, 240, 0.9);
+  }
+
   .flashcard {
     border-color: rgba(37, 99, 235, 0.35);
     background-color: rgba(37, 99, 235, 0.16);
+  }
+
+  .flashcard__toggle {
+    color: rgba(226, 232, 240, 0.85);
+    background: rgba(37, 99, 235, 0.28);
   }
 }

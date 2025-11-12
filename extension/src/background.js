@@ -1,6 +1,7 @@
 import { fetchRecentLearningVideos } from "./utils/history.js";
 import { analyzeVideos, generateFlashcards } from "./utils/analyzer.js";
 import { getSettings, setSettings, saveAnalysis, getLatestAnalysis } from "./utils/storage.js";
+import { hasHistoryPermission, requestHistoryPermission } from "./utils/permissions.js";
 
 const REFRESH_ALARM = "refresh-learning-analysis";
 const DEFAULT_SETTINGS = {
@@ -26,18 +27,27 @@ const DEFAULT_SETTINGS = {
   locale: "en-US"
 };
 
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(async (details) => {
   const currentSettings = await getSettings();
   if (!currentSettings) {
     await setSettings(DEFAULT_SETTINGS);
   }
+  if (details.reason === "install") {
+    chrome.tabs.create({
+      url: chrome.runtime.getURL("src/onboarding/index.html")
+    });
+  }
   await scheduleAnalysis();
-  await runAnalysis();
+  if (await hasHistoryPermission()) {
+    await runAnalysis();
+  }
 });
 
 chrome.runtime.onStartup.addListener(async () => {
   await scheduleAnalysis();
-  await runAnalysis();
+  if (await hasHistoryPermission()) {
+    await runAnalysis();
+  }
 });
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -78,18 +88,54 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message?.type === "learning-analysis:checkPermission") {
+    hasHistoryPermission()
+      .then((granted) => sendResponse({ ok: true, granted }))
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
+  if (message?.type === "learning-analysis:requestPermission") {
+    requestHistoryPermission()
+      .then(async (granted) => {
+        if (granted) {
+          await scheduleAnalysis();
+          await runAnalysis();
+        }
+        sendResponse({ ok: true, granted });
+      })
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
+  if (message?.type === "learning-analysis:openDashboard") {
+    chrome.tabs.create({
+      url: chrome.runtime.getURL("src/dashboard/index.html")
+    });
+    sendResponse({ ok: true });
+    return false;
+  }
+
   return false;
 });
 
 async function scheduleAnalysis() {
   const settings = (await getSettings()) ?? DEFAULT_SETTINGS;
+  const hasPermission = await hasHistoryPermission();
+
   chrome.alarms.clear(REFRESH_ALARM);
-  chrome.alarms.create(REFRESH_ALARM, {
-    periodInMinutes: Math.max(15, Math.min(settings.lookbackHours * 60, 720))
-  });
+  if (hasPermission) {
+    chrome.alarms.create(REFRESH_ALARM, {
+      periodInMinutes: Math.max(15, Math.min(settings.lookbackHours * 60, 720))
+    });
+  }
 }
 
 async function runAnalysis() {
+  if (!(await hasHistoryPermission())) {
+    throw new Error("History permission not granted");
+  }
+
   const settings = (await getSettings()) ?? DEFAULT_SETTINGS;
 
   const videos = await fetchRecentLearningVideos(settings);

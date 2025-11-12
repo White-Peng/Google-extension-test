@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Learning Reflection</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page__header">
+        <h1>Welcome!</h1>
+        <p>
+          This extension analyzes your recent YouTube history to surface learning highlights and flashcards. We only run the
+          analysis locally once you grant permission.
+        </p>
+      </header>
+
+      <section class="card">
+        <h2>Data requested</h2>
+        <ul>
+          <li><strong>Browsing history</strong>: Used to detect YouTube videos you've watched in the past few days.</li>
+          <li><strong>Storage</strong>: Keeps your settings and generated flashcards on this device only.</li>
+        </ul>
+        <p>No data leaves your browser unless you connect an external summary service in settings.</p>
+      </section>
+
+      <section class="actions">
+        <button id="grant-access" class="button button--primary">Allow history access</button>
+        <button id="skip" class="button button--ghost">Maybe later</button>
+        <p id="status" class="status"></p>
+      </section>
+    </main>
+
+    <script type="module" src="./onboarding.js"></script>
+  </body>
+</html>
