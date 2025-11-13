@@ -1,6 +1,18 @@
 import { fetchRecentLearningVideos } from "./utils/history.js";
 import { analyzeVideos, generateFlashcards } from "./utils/analyzer.js";
-import { getSettings, setSettings, saveAnalysis, getLatestAnalysis } from "./utils/storage.js";
+import {
+  getSettings,
+  setSettings,
+  saveAnalysis,
+  getLatestAnalysis,
+  getUserProfile,
+  saveUserProfile,
+  getFlashcardProgress,
+  saveFlashcardProgress,
+  appendFeedbackLog,
+  exportAllData,
+  clearAllData
+} from "./utils/storage.js";
 import { hasHistoryPermission, requestHistoryPermission } from "./utils/permissions.js";
 import { addCollectionItem, getCollectionItems, removeCollectionItem } from "./utils/collection.js";
 
@@ -26,10 +38,12 @@ const DEFAULT_SETTINGS = {
   summaryProvider: "heuristic",
   llmEndpoint: "",
   llmApiKey: "",
-  locale: "en-US"
+  locale: "en-US",
+  customKeywords: []
 };
 
 chrome.runtime.onInstalled.addListener(async (details) => {
+  await ensureSettingsDefaults();
   const currentSettings = await getSettings();
   if (!currentSettings) {
     await setSettings(DEFAULT_SETTINGS);
@@ -45,14 +59,17 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   await scheduleAnalysis();
   if (await hasHistoryPermission()) {
     await runAnalysis();
+    await maybeOpenPreferences();
   }
 });
 
 chrome.runtime.onStartup.addListener(async () => {
+  await ensureSettingsDefaults();
   await ensureContextMenus();
   await scheduleAnalysis();
   if (await hasHistoryPermission()) {
     await runAnalysis();
+    await maybeOpenPreferences();
   }
 });
 
@@ -116,7 +133,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         .then(async (granted) => {
           if (granted) {
             await scheduleAnalysis();
-            await runAnalysis();
+            await runAnalysis().catch(() => {});
+            await maybeOpenPreferences();
           }
           sendResponse({ ok: true, granted });
         })
@@ -129,6 +147,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       });
       sendResponse({ ok: true });
       return false;
+
+    case "userProfile:get":
+      getUserProfile()
+        .then((profile) => sendResponse({ ok: true, profile }))
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
+
+    case "userProfile:update":
+      updateUserProfile(message.profile)
+        .then((profile) => sendResponse({ ok: true, profile }))
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
 
     case "collection:getAll":
       getCollectionItems()
@@ -150,6 +180,49 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         .then(async (item) => {
           await notifyCollectionUpdated();
           sendResponse({ ok: true, item });
+        })
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
+
+    case "flashcards:getProgress":
+      getFlashcardProgress()
+        .then((progress) => sendResponse({ ok: true, progress }))
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
+
+    case "flashcards:updateProgress":
+      saveFlashcardProgress(message.progress ?? {})
+        .then(() => sendResponse({ ok: true }))
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
+
+    case "statistics:get":
+      buildStatistics()
+        .then((stats) => sendResponse({ ok: true, stats }))
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
+
+    case "feedback:submit":
+      appendFeedbackLog({
+        message: message.message ?? "",
+        email: message.email ?? ""
+      })
+        .then(() => sendResponse({ ok: true }))
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
+
+    case "app:exportData":
+      exportAllData()
+        .then((data) => sendResponse({ ok: true, data }))
+        .catch((error) => sendResponse({ ok: false, error: error.message }));
+      return true;
+
+    case "app:clearData":
+      clearAllData()
+        .then(async () => {
+          await ensureSettingsDefaults(true);
+          await ensureContextMenus();
+          sendResponse({ ok: true });
         })
         .catch((error) => sendResponse({ ok: false, error: error.message }));
       return true;
@@ -176,7 +249,7 @@ async function runAnalysis() {
     throw new Error("History permission not granted");
   }
 
-  const settings = (await getSettings()) ?? DEFAULT_SETTINGS;
+  const settings = await getEffectiveSettings();
 
   const videos = await fetchRecentLearningVideos(settings);
   const analyzed = await analyzeVideos(videos, settings);
@@ -189,6 +262,7 @@ async function runAnalysis() {
   };
 
   await saveAnalysis(result);
+  await setSettings(settings);
 
   try {
     await chrome.runtime.sendMessage({
@@ -202,6 +276,112 @@ async function runAnalysis() {
   }
 
   return result;
+}
+
+async function getEffectiveSettings() {
+  const current = (await getSettings()) ?? {};
+  const merged = {
+    ...DEFAULT_SETTINGS,
+    ...current
+  };
+  merged.customKeywords = uniq(merged.customKeywords ?? merged.keywords ?? []);
+  merged.keywords = uniq([
+    ...(DEFAULT_SETTINGS.keywords ?? []),
+    ...(current.keywords ?? []),
+    ...(merged.customKeywords ?? [])
+  ]);
+  return merged;
+}
+
+async function ensureSettingsDefaults(forceReset = false) {
+  if (forceReset) {
+    await setSettings(DEFAULT_SETTINGS);
+    return;
+  }
+
+  const settings = await getEffectiveSettings();
+  await setSettings(settings);
+}
+
+async function updateUserProfile(profile) {
+  const saved = await saveUserProfile(profile ?? {});
+  await mergeInterestsIntoSettings(saved.interests ?? []);
+  return saved;
+}
+
+async function mergeInterestsIntoSettings(interests = []) {
+  const settings = await getEffectiveSettings();
+  const custom = uniq(interests);
+  const next = {
+    ...settings,
+    customKeywords: custom,
+    keywords: uniq([...(settings.keywords ?? []), ...custom])
+  };
+  await setSettings(next);
+}
+
+async function maybeOpenPreferences() {
+  const profile = await getUserProfile();
+  const needsProfile = !profile?.interests?.length;
+  if (needsProfile) {
+    chrome.tabs.create({
+      url: chrome.runtime.getURL("src/onboarding/preferences.html")
+    });
+  }
+}
+
+async function buildStatistics() {
+  const [analysis, collection, profile, flashcards] = await Promise.all([
+    getLatestAnalysis(),
+    getCollectionItems(),
+    getUserProfile(),
+    getFlashcardProgress()
+  ]);
+
+  const videos = analysis?.videos ?? [];
+  const flashcardList = analysis?.flashcards ?? [];
+  const flashcardStatus = Object.values(flashcards ?? {});
+
+  const typeCounts = collection.reduce((acc, item) => {
+    const key = item.type ?? "other";
+    acc[key] = (acc[key] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  const channelCounts = videos.reduce((acc, video) => {
+    const key = video.author ?? "Unknown channel";
+    acc[key] = (acc[key] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  const interestCounts = (profile?.interests ?? []).reduce((acc, interest) => {
+    const matches = videos.filter((video) =>
+      [video.summary ?? "", video.title ?? ""].join(" ").toLowerCase().includes(interest.toLowerCase())
+    ).length;
+    acc[interest] = matches;
+    return acc;
+  }, {});
+
+  const flashcardPerformance = flashcardStatus.reduce(
+    (acc, entry) => {
+      const state = entry?.lastRating ?? "unseen";
+      acc[state] = (acc[state] ?? 0) + 1;
+      return acc;
+    },
+    { unseen: Math.max(flashcardList.length - flashcardStatus.length, 0) }
+  );
+
+  return {
+    totals: {
+      videos: videos.length,
+      flashcards: flashcardList.length,
+      highlights: collection.length
+    },
+    channels: topN(channelCounts, 5),
+    interestMatches: interestCounts,
+    highlightTypes: typeCounts,
+    flashcards: flashcardPerformance
+  };
 }
 
 async function ensureContextMenus() {
@@ -306,4 +486,15 @@ async function flashBadge() {
   } catch (error) {
     console.warn("Failed to update badge", error);
   }
+}
+
+function topN(map, limit = 5) {
+  return Object.entries(map ?? {})
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([label, value]) => ({ label, value }));
+}
+
+function uniq(array = []) {
+  return Array.from(new Set(array.filter(Boolean)));
 }

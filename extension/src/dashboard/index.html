@@ -3,72 +3,204 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Learning Reflection Dashboard</title>
+    <title>Learning Reflection Workspace</title>
     <link rel="stylesheet" href="./index.css" />
   </head>
   <body>
-    <header class="hero">
-      <div>
-        <h1>Learning Reflection Hub</h1>
-        <p>Your recent educational YouTube journeys, summarized and ready to review.</p>
-        <div class="hero__actions">
+    <div class="dashboard">
+      <aside class="sidebar">
+        <div class="sidebar__brand">
+          <span class="sidebar__icon">LR</span>
+          <div>
+            <h1>Learning Reflection</h1>
+            <p>Personal study hub</p>
+          </div>
+        </div>
+        <nav class="sidebar__nav">
+          <button class="nav__item is-active" data-view="home">
+            <span>Home</span>
+          </button>
+          <button class="nav__item" data-view="quickstart">
+            <span>Quickstart</span>
+          </button>
+          <button class="nav__item" data-view="database">
+            <span>Database</span>
+          </button>
+          <button class="nav__item" data-view="statistic">
+            <span>Statistic</span>
+          </button>
+          <button class="nav__item" data-view="settings">
+            <span>Setting</span>
+          </button>
+        </nav>
+        <div class="sidebar__footer">
           <button id="refresh" class="button button--primary">Refresh analysis</button>
-          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="button button--ghost">Back to YouTube</a>
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="button button--ghost">Open YouTube</a>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="content__header">
+          <div>
+            <h2 id="view-title">Home</h2>
+            <p id="view-description">Chat with your learning copilot about your recent activity.</p>
+          </div>
+          <div class="status-pill">
+            <span id="status-indicator" class="status-indicator"></span>
+            <span id="status-text">Loading…</span>
+          </div>
+        </header>
+
+        <section id="view-home" class="view view--active">
+          <div class="home">
+            <div class="chat">
+              <div id="chat-thread" class="chat__thread"></div>
+              <div class="chat__composer">
+                <div id="quick-prompts" class="chat__prompts"></div>
+                <form id="chat-form" class="chat__form">
+                  <input id="chat-input" type="text" placeholder="Ask about your learning progress…" autocomplete="off" />
+                  <button class="button button--primary" type="submit">Send</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-quickstart" class="view">
+          <div class="quickstart">
+            <div class="quickstart__meta">
+              <p id="quickstart-stats"></p>
+              <button id="quickstart-reset" class="button button--ghost">Reset session</button>
+            </div>
+            <div class="quickstart__card" id="quickstart-card">
+              <p class="quickstart__empty">Flashcards will appear once we detect educational videos.</p>
+            </div>
+            <div class="quickstart__actions" id="quickstart-actions" hidden>
+              <button class="button" data-rating="again">Review again</button>
+              <button class="button" data-rating="good">Got it</button>
+              <button class="button button--primary" data-rating="great">Mastered</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-database" class="view">
+          <div class="database">
+            <div class="database__tabs">
+              <button class="db-tab is-active" data-db="history">History</button>
+              <button class="db-tab" data-db="highlights">Saved highlights</button>
+            </div>
+            <div class="database__search">
+              <input type="search" id="database-search" placeholder="Search titles, channels or keywords…" />
+            </div>
+            <div class="database__summary" id="database-summary"></div>
+            <div class="database__content">
+              <ul id="database-history" class="database__list is-active"></ul>
+              <ul id="database-highlights" class="database__list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-statistic" class="view">
+          <div class="stats">
+            <div class="stats__grid" id="stats-totals"></div>
+            <div class="stats__section">
+              <h3>Interest matches</h3>
+              <div id="stats-interests" class="stats__bars"></div>
+            </div>
+            <div class="stats__section">
+              <h3>Highlights by type</h3>
+              <div id="stats-highlights" class="stats__bars"></div>
+            </div>
+            <div class="stats__section">
+              <h3>Top channels</h3>
+              <div id="stats-channels" class="stats__list"></div>
+            </div>
+            <div class="stats__section">
+              <h3>Flashcard progress</h3>
+              <div id="stats-flashcards" class="stats__bars"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <div class="settings">
+            <section class="settings__card">
+              <h3>Learning interests</h3>
+              <p>Update the topics we use to detect relevant videos and generate summaries.</p>
+              <form id="settings-interests-form" class="form-inline">
+                <textarea id="settings-interests" rows="3" placeholder="Comma separated interests"></textarea>
+                <div class="form-inline__actions">
+                  <button type="submit" class="button button--primary">Save interests</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="settings__card">
+              <h3>Data management</h3>
+              <div class="settings__actions">
+                <button id="export-data" class="button button--ghost">Download my data</button>
+                <button id="clear-data" class="button">Clear local data</button>
+              </div>
+            </section>
+
+            <section class="settings__card">
+              <h3>Feedback</h3>
+              <form id="feedback-form" class="form-inline">
+                <input type="email" id="feedback-email" placeholder="Optional email for follow-up" />
+                <textarea id="feedback-message" rows="4" placeholder="Share your feedback or ideas…"></textarea>
+                <div class="form-inline__actions">
+                  <button type="submit" class="button button--primary">Send feedback</button>
+                  <button type="button" id="feedback-copy" class="button button--ghost">Copy developer email</button>
+                </div>
+              </form>
+              <p class="settings__hint">
+                Feedback opens your email client with details pre-filled so you can review before sending.
+              </p>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="chat-message-template">
+      <div class="chat__message" data-role="">
+        <div class="chat__avatar"></div>
+        <div class="chat__bubble">
+          <p class="chat__text"></p>
         </div>
       </div>
-      <div class="hero__status">
-        <span id="status-indicator" class="status-indicator"></span>
-        <span id="status-text"></span>
-      </div>
-    </header>
-
-    <main class="layout">
-      <section class="panel panel--videos">
-        <header>
-          <h2>Educational videos</h2>
-        </header>
-        <ul id="video-list" class="video-list"></ul>
-      </section>
-
-      <section class="panel panel--flashcards">
-        <header>
-          <h2>Flashcards</h2>
-        </header>
-        <div id="flashcard-list" class="flashcard-grid"></div>
-      </section>
-
-      <section class="panel panel--collections">
-        <header>
-          <h2>Saved highlights</h2>
-        </header>
-        <div id="collection-list" class="collection-list"></div>
-      </section>
-    </main>
-
-    <template id="flashcard-template">
-      <article class="flashcard" data-state="question">
-        <button class="flashcard__toggle" type="button">
-          <span class="flashcard__label flashcard__label--question">Show answer</span>
-          <span class="flashcard__label flashcard__label--answer">Hide answer</span>
-        </button>
-        <div class="flashcard__content">
-          <h3 class="flashcard__question"></h3>
-          <p class="flashcard__answer"></p>
-          <a class="flashcard__link" target="_blank" rel="noopener noreferrer">Open video</a>
-        </div>
-      </article>
     </template>
 
-    <template id="video-item-template">
-      <li class="video">
-        <a class="video__title" target="_blank" rel="noopener noreferrer"></a>
-        <p class="video__summary"></p>
-        <div class="video__meta">
-          <span class="video__channel"></span>
-          <span class="video__duration"></span>
-          <span class="video__score"></span>
+    <template id="history-item-template">
+      <li class="db-item">
+        <div class="db-item__header">
+          <a class="db-item__title" target="_blank" rel="noopener noreferrer"></a>
+          <span class="db-item__meta db-item__time"></span>
         </div>
+        <p class="db-item__summary"></p>
+        <div class="db-item__meta db-item__details"></div>
       </li>
+    </template>
+
+    <template id="highlight-item-template">
+      <li class="db-item">
+        <div class="db-item__header">
+          <span class="db-item__badge"></span>
+          <span class="db-item__meta db-item__time"></span>
+        </div>
+        <p class="db-item__summary"></p>
+        <div class="db-item__meta db-item__links"></div>
+      </li>
+    </template>
+
+    <template id="quickstart-card-template">
+      <article class="quick-card" data-id="">
+        <p class="quick-card__question"></p>
+        <div class="quick-card__answer" hidden></div>
+        <div class="quick-card__meta">
+          <a class="quick-card__link" target="_blank" rel="noopener noreferrer">Open source</a>
+        </div>
+      </article>
     </template>
 
     <script type="module" src="./index.js"></script>
