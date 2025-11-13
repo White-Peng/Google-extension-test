@@ -53,8 +53,8 @@ body {
 
 .sidebar__brand p {
   margin: 4px 0 0 0;
-  font-size: 0.85rem;
-  color: rgba(226, 232, 240, 0.6);
+  font-size: 0.92rem;
+  color: rgba(226, 232, 240, 0.75);
 }
 
 .sidebar__nav {
@@ -117,12 +117,12 @@ body {
 
 .button--ghost {
   background: transparent;
-  color: rgba(226, 232, 240, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: rgba(226, 232, 240, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.45);
 }
 
 .button--ghost:hover {
-  border-color: rgba(226, 232, 240, 0.6);
+  border-color: rgba(226, 232, 240, 0.75);
 }
 
 .content {
@@ -248,15 +248,15 @@ body {
 .chat__prompts button {
   border: none;
   border-radius: 10px;
-  padding: 8px 12px;
-  font-size: 0.85rem;
-  background: rgba(37, 99, 235, 0.18);
-  color: #bfdbfe;
+  padding: 9px 14px;
+  font-size: 0.95rem;
+  background: rgba(37, 99, 235, 0.26);
+  color: #e0f2fe;
   cursor: pointer;
 }
 
 .chat__prompts button:hover {
-  background: rgba(37, 99, 235, 0.28);
+  background: rgba(37, 99, 235, 0.38);
 }
 
 .chat__composer {
@@ -274,7 +274,7 @@ body {
   flex: 1;
   border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 12px;
-  padding: 12px 16px;
+  padding: 14px 18px;
   background: rgba(15, 23, 42, 0.55);
   color: inherit;
 }
@@ -299,7 +299,15 @@ body {
 
 .quickstart__meta p {
   margin: 0;
-  color: rgba(226, 232, 240, 0.75);
+  color: rgba(226, 232, 240, 0.85);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+#quickstart-stats {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #f8fafc;
 }
 
 .quickstart__card {
@@ -342,7 +350,7 @@ body {
   justify-content: space-between;
   align-items: center;
   font-size: 0.85rem;
-  color: rgba(226, 232, 240, 0.6);
+  color: rgba(226, 232, 240, 0.7);
 }
 
 .quick-card__link {
@@ -395,7 +403,8 @@ body {
   border: 1px solid rgba(148, 163, 184, 0.35);
   background: rgba(15, 23, 42, 0.55);
   color: inherit;
-  padding: 10px 14px;
+  padding: 12px 16px;
+  font-size: 0.96rem;
 }
 
 .database__summary {
@@ -452,14 +461,14 @@ body {
 
 .db-item__summary {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 1rem;
   line-height: 1.55;
-  color: rgba(226, 232, 240, 0.78);
+  color: rgba(226, 232, 240, 0.9);
 }
 
 .db-item__meta {
   font-size: 0.8rem;
-  color: rgba(148, 163, 184, 0.75);
+  color: rgba(203, 213, 225, 0.75);
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
@@ -500,13 +509,13 @@ body {
 
 .stats__card h4 {
   margin: 0;
-  font-size: 0.9rem;
-  color: rgba(226, 232, 240, 0.7);
+  font-size: 1rem;
+  color: rgba(226, 232, 240, 0.75);
 }
 
 .stats__card p {
   margin: 6px 0 0 0;
-  font-size: 1.6rem;
+  font-size: 1.9rem;
   font-weight: 600;
 }
 
@@ -562,8 +571,8 @@ body {
 .stats__list-item {
   display: flex;
   justify-content: space-between;
-  font-size: 0.9rem;
-  color: rgba(226, 232, 240, 0.78);
+  font-size: 0.98rem;
+  color: rgba(226, 232, 240, 0.85);
 }
 
 .settings {
@@ -588,8 +597,9 @@ body {
 
 .settings__card p {
   margin: 0;
-  color: rgba(226, 232, 240, 0.72);
-  font-size: 0.9rem;
+  color: rgba(226, 232, 240, 0.82);
+  font-size: 0.98rem;
+  line-height: 1.55;
 }
 
 .form-inline {
