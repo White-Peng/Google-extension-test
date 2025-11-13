@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "Youtube Learning Reflection & Flashcards",
+  "description": "Analyze your YouTube watch history to extract educational content, summarize insights, and create flashcards.",
+  "version": "0.1.0",
+  "action": {
+    "default_title": "Learning Reflection",
+    "default_popup": "src/popup/popup.html"
+  },
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "options_page": "src/options/options.html",
+  "permissions": [
+    "storage",
+    "alarms",
+    "scripting",
+    "contextMenus"
+  ],
+  "optional_permissions": [
+    "history"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://www.googleapis.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "src/content/youtubeHelper.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/onboarding/*",
+        "src/dashboard/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

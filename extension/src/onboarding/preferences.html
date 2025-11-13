@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Choose Your Learning Interests</title>
+    <link rel="stylesheet" href="./preferences.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="shell__header">
+        <h1>Tell us what you want to learn</h1>
+        <p>
+          Pick the topics you care about so we can prioritise relevant YouTube videos and generate better flashcards for
+          you.
+        </p>
+      </header>
+
+      <section class="card">
+        <h2>Popular themes</h2>
+        <div id="chip-list" class="chip-list"></div>
+      </section>
+
+      <section class="card">
+        <h2>Add your own</h2>
+        <form id="interest-form" class="form">
+          <label class="form__field">
+            <span>Topics (comma separated)</span>
+            <input type="text" id="custom-interests" placeholder="e.g. machine learning, history of art, calculus" />
+          </label>
+          <div class="form__actions">
+            <button type="submit" class="button button--primary">Save &amp; open dashboard</button>
+            <button type="button" id="skip-btn" class="button button--ghost">Skip for now</button>
+          </div>
+        </form>
+      </section>
+
+      <footer class="shell__footer">
+        <p>You can always edit these interests later from the Settings panel.</p>
+      </footer>
+    </main>
+
+    <script type="module" src="./preferences.js"></script>
+  </body>
+</html>
