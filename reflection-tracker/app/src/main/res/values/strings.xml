@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Reflection Tracker</string>
+    <string name="notification_channel_name">Reflection Tracker</string>
+    <string name="notification_channel_description">保持无障碍服务常驻以捕获浏览记录</string>
+    <string name="notification_title">学习反思采集已开启</string>
+    <string name="notification_text">正在监听 Chrome 地址栏以记录学习行为</string>
+    <string name="accessibility_service_description">捕获 Chrome 浏览 URL 并触发学习反思</string>
+    <string name="accessibility_service_summary">用于学习反思的浏览记录采集器</string>
+    <string name="request_permission_rationale">为了在 Android 13+ 显示常驻通知，需要授予通知权限。</string>
+    <string name="open_accessibility_settings">打开无障碍设置</string>
+    <string name="grant_notification_permission">授予通知权限</string>
+    <string name="no_data">尚未捕获任何浏览记录</string>
+    <string name="events_today">今日记录</string>
+    <string name="url_label">网址</string>
+    <string name="time_label">时间</string>
+    <string name="chrome_not_detected">当前仅支持 Chrome 稳定版包名 com.android.chrome。</string>
+</resources>
